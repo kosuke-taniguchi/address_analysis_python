@@ -1,23 +1,27 @@
-from locale import getpreferredencoding
-from unittest import result
 import pandas as pd
 
-def get_prefecture_and_city():
-    pref_and_city_csv_data = pd.read_csv("./KEN_ALL_ROME.csv", usecols=[1])
+
+def get_city_csv_data():
+    """get_city_csv_data
+    日本の市（特別区を含む）データを取得する
+    また、MySQLへInsertする際に必要な外部キーも順番に貼っていく
+    """
+    pref_and_city_csv_data = pd.read_csv("./ken_shi.csv")
+
+    new_df = pd.DataFrame(columns=["prefecture_id", "name"])
+    temp_idx = 0
+    temp_pref = ""
+    for i, pref in enumerate(pref_and_city_csv_data.iterrows()):
+        print(i)
+        if temp_pref != pref[1]["KEN"]:  
+            temp_idx += 1
+            temp_pref = pref[1]["KEN"]
+
+        child_df = pd.DataFrame({"prefecture_id": temp_idx, "name": pref[1]["SHI"]}, index=[0])
+        new_df = pd.concat([new_df, child_df])
     
-    result = pref_and_city_csv_data.drop_duplicates()
-    for r in result.iterrows():
-        splited = r[1].astype(str).split("GUN")
-        print(splited)
-    # result.to_csv("./results/results.csv")
-
-def get_prefectures():
-    csv_data = pd.read_csv("./KEN_ALL_ROME.csv", usecols=[0])
-
-    result = csv_data.drop_duplicates(subset="KEN")
-    result.to_csv("./results/prefectures.csv", index=False)
+    new_df.to_csv("./results/city.csv")
 
 
 if __name__ == "__main__":
-    get_prefecture_and_city()
-    get_prefectures()
+    get_city_csv_data()
