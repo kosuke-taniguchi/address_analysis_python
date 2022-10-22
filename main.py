@@ -1,3 +1,4 @@
+from operator import index
 import pandas as pd
 
 
@@ -23,5 +24,12 @@ def get_city_csv_data():
     new_df.to_csv("./results/city.csv")
 
 
+def add_country_to_pref_and_city_data():
+    pref_and_city_csv_data = pd.read_csv("./ken_shi.csv")
+    pref_and_city_csv_data.insert(loc=0, column="country", value="日本")
+    pref_and_city_csv_data.to_csv("./results/country_pref_city.csv", index=False)
+
+
 if __name__ == "__main__":
-    get_city_csv_data()
+    # get_city_csv_data()
+    add_country_to_pref_and_city_data()
